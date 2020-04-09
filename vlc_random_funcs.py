@@ -36,29 +36,35 @@ def create_playlist():
     return playlist
 
 
-def create_playlist_length(playlist):
-    if len(playlist) > 0:
-        total_songs = len(playlist)
-        playlist_length = raw_input("How many songs do you want to play? Enter for all ")
-        if playlist_length != '':
-            while not playlist_length.isdigit():
-                playlist_length = raw_input("Please enter an integer value: ")
-            playlist_length = int(playlist_length)
-            if playlist_length > total_songs:
-                print "Value larger than playlist length. Will play full playlist."
-        else:
-            playlist_length = total_songs
+def search_playlist(playlist):
+    query = raw_input("Search word: ")# add multiple search by splitting
+    playlist = [x for x in playlist if query in os.path.basename(x)]
+    return playlist
 
-    if not (playlist == [] or playlist_length == 0):
-        print "Randomly playing:\n"
-        for song in playlist:
-            print song
+
+def create_playlist_length(playlist):
+    total_songs = len(playlist)
+    playlist_length = raw_input("How many songs do you want to play? Enter for all ")
+    if playlist_length != '':
+        while not playlist_length.isdigit():
+            playlist_length = raw_input("Please enter an integer value: ")
+        playlist_length = int(playlist_length)
+        if playlist_length > total_songs:
+            print "Value larger than playlist length. Will repeat songs in the playlist."
     else:
-        if not playlist_length == "": # ugly but easy, or this prints. need better than break in loops
+        playlist_length = total_songs
+    return [playlist_length, total_songs]
+
+
+def display_songs(playlist, length_list):
+    if not (playlist == [] or length_list[0] == 0):
+            print "Randomly playing %s song(s) from: " % length_list[0]
+            for song in playlist:
+                print os.path.basename(song)            
+    else:
+        if not length_list[0] == "": # ugly but easy, or this prints. need better than break in loops
             print "Exiting..."
             sys.exit(0)
-
-    return [playlist_length, total_songs]
 
 
 def fewer_songs(playlist_length, playlist):
